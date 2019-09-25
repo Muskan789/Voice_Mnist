@@ -149,22 +149,23 @@ function createDownloadLink(blob) {
 	upload.innerHTML = "Upload";
 	upload.addEventListener("click", function(event){
 	  let blob = new Blob(chunks, {type: media.type });
-      var xhr=new XMLHttpRequest();
-		  xhr.onload=function(e) {
-		      if(this.readyState === 4) {
-		          console.log("Server returned: ",e.target.responseText);
-		      }
-		  };
-		  var fd=new FormData();
-		  fd.append("audio_data",blob, filename);
-		 //fd.append('csrfmiddlewaretoken', $('#csrf-helper input[name="csrfmiddlewaretoken"]').attr('value'));
-		  xhr.open("POST","/show/",true);
-		  xhr.setRequestHeader('csrfmiddlewaretoken', $('#csrf-helper input[name="csrfmiddlewaretoken"]').attr('value'));
-		  xhr.send(fd);
+      console.log("start sending binary data...");
+var form = new FormData();
+form.append('audio', blob);
+
+$.ajax({
+    url: 'http://localhost:8000/<your api endpoint>/',
+    type: 'POST',
+    data: form,
+    processData: false,
+    contentType: false,
+    success: function (data) {
+        console.log('response' + JSON.stringify(data));
+    }
+	})
 	})
 	li.appendChild(document.createTextNode (" "))//add a space in between
 	li.appendChild(upload)//add the upload link to li
 
 	//add the li element to the ol
 	recordingsList.appendChild(li);
-}
